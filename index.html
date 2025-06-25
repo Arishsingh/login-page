@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f3f3f3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .form-container {
+      background-color: white;
+      padding: 40px 50px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    p.subtext {
+      color: #666;
+      margin-bottom: 25px;
+      font-size: 0.95rem;
+    }
+
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px;
+      width: 100%;
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .google-btn img {
+      width: 18px;
+      height: 18px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      margin-bottom: 18px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.95rem;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background-color: #0078d4;
+      color: white;
+      padding: 10px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .status-message {
+      margin-top: 15px;
+      font-weight: 600;
+      color: green;
+      text-align: center;
+    }
+
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #999;
+    }
+    .google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #3c4043;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.google-btn:hover {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.google-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+  </style>
+</head>
+<body>
+  <div class="form-container" id="form-box">
+    <h2>Create an account</h2>
+    <p class="subtext">Sign up with Google or use the form below</p>
+
+    <button class="google-btn" id="googleSignInBtn">
+        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" />
+        <span>Sign up with Google</span>
+      </button>
+      
+
+    <form id="manualForm">
+      <label for="fname">First Name</label>
+      <input type="text" id="fname" placeholder="John" required>
+
+      <label for="lname">Last Name</label>
+      <input type="text" id="lname" placeholder="Doe" required>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="you@example.com" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter password" required>
+
+      <button class="submit-btn" type="submit">Sign Up</button>
+    </form>
+
+
+
+  <!-- Firebase JS SDK and App Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  
+    const firebaseConfig = {
+      apiKey: "AIzaSyDJBzJD2ctjDOQp4QZXDnoJeudOvlyVF1M",
+      authDomain: "login-page-abe50.firebaseapp.com",
+      projectId: "login-page-abe50",
+      storageBucket: "login-page-abe50.firebasestorage.app",
+      messagingSenderId: "1095857304885",
+      appId: "1:1095857304885:web:d9446f2d9724ea3d26487c",
+      measurementId: "G-4NV43QKYLV"
+    };
+  
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+  
+    // Google Sign-In
+    document.addEventListener('DOMContentLoaded', () => {
+      const googleBtn = document.getElementById('googleSignInBtn');
+      if (googleBtn) {
+        googleBtn.addEventListener('click', () => {
+          signInWithPopup(auth, provider)
+            .then((result) => {
+              const user = result.user;
+              console.log("Google Sign-In Success:", user.email);
+              window.location.href = "http://localhost:3000";  // ✅ updated URL
+            })
+            .catch((error) => {
+              console.error("Google Sign-In Error:", error);
+              document.getElementById('status').textContent = "❌ Google Sign-In failed.";
+            });
+        });
+      }
+  
+      document.getElementById('manualForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const fname = document.getElementById('fname').value;
+        console.log("Manual Sign-Up:", fname);
+        window.location.href = "http://localhost:3000";  // ✅ updated URL
+      });
+    });
+  </script>
+  
+</body>
+</html>
